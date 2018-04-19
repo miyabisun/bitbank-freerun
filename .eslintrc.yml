@@ -1,0 +1,12 @@
+---
+  root: true
+  extends: standard
+  rules:
+    comma-dangle: [warn, always-multiline]
+    linebreak-style: [error, unix]
+    no-multiple-empty-lines: [error, {max: 1, maxBOF: 1, maxEOF: 1}]
+    no-unused-vars: [warn, all]
+  env:
+    node: true
+    mocha: true
+
