@@ -7,9 +7,7 @@ require! {
   ramda: R
   \lazy.js : L
   pubnub: PubNub
-  \./modules/transactions.js
-  \./modules/depth.js
-  \./modules/candlestick.js
+  \./modules/subscribers.ls
 }
 weights = [
   [32, 10]
@@ -22,19 +20,22 @@ weights = [
 |> R.map ([weight, length]) -> R.repeat weight, length
 |> R.flatten
 
-t = transactions.from \xrp_jpy, weights, ->
-  console.log do
-    t.datetime.to-format("yyyy/MM/dd HH:mm:ss")
-    t.vector.to-fixed 3
-    do
-      sell: d.asks! |> (.0) >> (or []) >> (.0)
-      buy: d.bids! |> (.0) >> (or []) >> (.0)
+vector = (t)->
+  return 0 if t.transactions.length < t.weights.length / 4
+  {sell, buy} = t.mean
+  switch
+    | sell <= buy => buy / sell |> (- 1) |> Math.sqrt |> Math.min 10, _
+    | _ => sell / buy |> (- 1) |> Math.sqrt |> (* -1) |> Math.max -10, _
 
-d = depth.from \xrp_jpy, ->
-  # console.log d.asks!, d.bids!
-  # console.log t.last
+{transactions: t, depth: d, candlestick: c} = subscribers \xrp_jpy
 
-c = candlestick.from \xrp_jpy, ->
-  # console.log c.datum
-  # console.log c.ohlcv-by(\1min).data
+t
+  ..weights = weights
+  ..on \message, ->
+    console.log do
+      t.datetime.to-format("yyyy/MM/dd HH:mm:ss")
+      vector t .to-fixed 3
+      do
+        sell: d.asks! |> (.0) >> (or []) >> (.0)
+        buy: d.bids! |> (.0) >> (or []) >> (.0)
 

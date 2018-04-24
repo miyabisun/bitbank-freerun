@@ -1,7 +1,7 @@
 const R = require('ramda')
 const pipe = require('../functions/pipe.js')
 
-module.exports = class Safe {
+module.exports = class Finance {
   constructor ({pair, safe = {}, accounting}) {
     this.pair = pair
     this.safe = safe
@@ -12,7 +12,7 @@ module.exports = class Safe {
       pair.split('_'),
       R.zip(R.__, [to, from]),
       R.fromPairs,
-      it => new Safe({pair, safe: it, accounting}),
+      it => new Finance({pair, safe: it, accounting}),
     )
   }
   buyAmountOf (price) { return parseFloat(this.from / price * 10000) / 10000 }

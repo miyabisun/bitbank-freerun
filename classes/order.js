@@ -37,8 +37,8 @@ module.exports = class Order {
   get averagePrice () { return parseFloat(this.data.average_price) }
   get orderedAt () { return DateTime.fromMillis(this.data.ordered_at) }
   get status () { return this.data.status }
-  get isFilled () { return !this.isUnfilled }
-  get isUnfilled () { return ['UNFILLED', 'PARTIALLY_FILLED'].includes(this.data.status) }
+  get isTerminated () { return !this.isUnterminated }
+  get isUnterminated () { return ['UNFILLED', 'PARTIALLY_FILLED'].includes(this.data.status) }
   // getter A vs B
   get signA () { return this.side === 'buy' ? 1 : -1 }
   get signB () { return this.side === 'sell' ? 1 : -1 }
@@ -47,14 +47,16 @@ module.exports = class Order {
 
   // cancel :: Undefined -> Promise
   async cancel () {
-    if (!this.isUnfilled) return true
+    if (this.isTerminated) return this
     try {
       await this.api.cancel(this.id)
+      await this.update()
+      return this
     } catch (e) {}
   }
   // update :: Undefined -> Promise
   async update () {
-    if (!this.isUnfilled) return this
+    if (this.isTerminated) return this
     try {
       await this.api.info(this.id)
       this.entity = it

@@ -1,51 +1,56 @@
+const Order = require('./order.js')
+
 module.exports = class Accounting {
-  constructor ({api, safe, log}) {
+  constructor (api) {
     this.api = api
-    this.safe = safe
-    this.log = log
     this.order = null
-    this.terminatedOrders = []
     this.callbacks = new Set()
     this.autoUpdate()
-    this.gc()
   }
 
-  static from ({api, safe, log = it => console.log(it)}) {
-    return new Accounting({api, safe, log})
+  static from (api) {
+    return new Accounting(api)
   }
 
   // getters
   get hasOrder () { Boolean(this.order) }
 
   // methods
-  async cancel () {
-    if (!this.order) return true
-    await this.order.cancel()
-    await this.update()
-  }
-
-  // events
   on (cb) { this.callbacks.add(cb) }
   off (cb) { this.callbacks.delete(cb) }
   async update () {
     if (!this.order) return true
     try {
       await this.order.update()
-      if (this.order.isFilled) this.callbacks.forEach(cb => cb(this.order))
-      this.terminatedOrders.push(this.order)
+      if (this.order.isUnrminated) return true
+      this.callbacks.forEach(cb => cb(this.order))
       this.order = null
     } catch (e) {}
   }
-  async autoUpdate () {
+  async cancel () {
+    if (!this.order) return true
+    await this.order.cancel()
     await this.update()
-    setTimeout(() => this.autoUpdate(), 500)
   }
-  gc () {
-    if (this.terminatedOrders.length > 0) {
-      this.terminatedOrders.forEach(it => this.log(it))
-      this.terminatedOrders = []
-    }
-    setTimeout(() => this.gc(), 1000)
+  async buy (price, amount, api) {
+    if (this.order) await this.cancel()
+    this.order = await Order.from('buy', price, amount, api)
+  }
+  async sell (price, amount, api) {
+    if (this.order) await this.cancel()
+    this.order = await Order.from('sell', price, amount, api)
+  }
+  async marketBuy (amount, api) {
+    if (this.order) await this.cancel()
+    this.order = await Order.from('marketBuy', 0, amount, api)
+  }
+  async marketSell (amount, api) {
+    if (this.order) await this.cancel()
+    this.order = await Order.from('marketSell', 0, amount, api)
+  }
+  async autoUpdate () {
+    if (this.order) await this.update()
+    setTimeout(() => this.autoUpdate(), 500)
   }
 }
 
