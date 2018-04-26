@@ -8,8 +8,10 @@ klass =
   transactions: require \../classes/transactions.ls
   candlestick: require \../classes/candlestick.ls
 
-module.exports = (pair)->
+module.exports = (pair) ->
   <[depth transactions candlestick]>
-  |> R.map -> [it, klass.(it).from Subscriber.from "#{it}_#pair", subscribe-key]
+  |> R.map -> [
+    it
+    "#{it}_#pair" |> Subscriber.from _, subscribe-key |> klass.(it).from
+  ]
   |> R.from-pairs
-

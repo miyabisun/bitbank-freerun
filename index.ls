@@ -1,6 +1,3 @@
-process.env <<<
-  PAIR: \xrp_jpy
-  LIMIT: 5
 require! {
   luxon: {DateTime}
   \node-bitbankcc : bitbank
@@ -20,7 +17,7 @@ weights = [
 |> R.map ([weight, length]) -> R.repeat weight, length
 |> R.flatten
 
-vector = (t)->
+vector = (t) ->
   return 0 if t.transactions.length < t.weights.length / 4
   {sell, buy} = t.mean
   switch
@@ -38,4 +35,3 @@ t
       do
         sell: d.asks! |> (.0) >> (or []) >> (.0)
         buy: d.bids! |> (.0) >> (or []) >> (.0)
-

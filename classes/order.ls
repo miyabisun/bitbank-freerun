@@ -3,19 +3,19 @@ require! {
 }
 
 module.exports = class Order
-  (@api, @entity)->
-  @from = (type, price, amount, api)->>
+  (@api, @entity) ->
+  @from = (type, price, amount, api) ->>
     entity = if type is /^market/
       then api.(type) amount
       else api.(type) price, amount
     new Order api, await entity
-  @buy = (price, amount, api)->>
+  @buy = (price, amount, api) ->>
     Order.from \buy, price, amount, api
-  @sell = (price, amount, api)->>
+  @sell = (price, amount, api) ->>
     Order.from \sell, price, amount, api
-  @market-buy = (amount, api)->>
+  @market-buy = (amount, api) ->>
     Order.from \marketBuy, 0, amount, api
-  @market-sell = (amount, api)->>
+  @market-sell = (amount, api) ->>
     Order.from \marketSell, 0, amount, api
 
   # getters
@@ -31,7 +31,7 @@ module.exports = class Order
   orderd-at:~ -> DateTime.from-millis @data.ordered_at
   status:~ -> @data.status
   is-terminated:~ -> not @is-unterminated
-  isUnterminated:~ -> <[UNFILLED PARTIALLY_FILLED]>.includes @data.status
+  is-unterminated:~ -> <[UNFILLED PARTIALLY_FILLED]>.includes @data.status
 
   # A vs B
   sign-a:~ -> if @side is \buy then 1 else -1
@@ -52,4 +52,3 @@ module.exports = class Order
     catch
       @update!
     return @
-

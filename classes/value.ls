@@ -1,5 +1,4 @@
 module.exports = class Value
-  (@order)->
+  (@order) ->
   price:~ -> @order.0
   amount:~ -> @order.1
-

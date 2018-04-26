@@ -1,3 +1,2 @@
-module.exports = (api, pair, date)->>
+module.exports = (api, pair, date) ->>
   await api.get-transactions pair, date
-

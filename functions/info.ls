@@ -1,3 +1,2 @@
-module.exports = (api, pair, id)->>
+module.exports = (api, pair, id) ->>
   await api.get-order pair, id
-

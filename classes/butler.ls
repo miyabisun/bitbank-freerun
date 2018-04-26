@@ -3,14 +3,16 @@ require! {
 }
 
 module.exports = class Butler
-  ({@api, @depth, @accounting})->
+  ({@api, @depth, @accounting}) ->
     @mode = null
-    @orders = []
+    @level = 0
   @from = -> new Butler it
-  last:~ -> R.last @orders
+  order:~ -> @accounting.order
   cancel: -> Promise.all @orders.map -> it.cancel!
-  buy: -> @mode = \buy
-  sell: -> @mode = \sell
+  buy: (@level = 1) -> @mode = \buy
+  sell: (@level = 1) -> @mode = \sell
   market-buy: -> @mode = \marketBuy
   market-sell: -> @mode = \marketSell
 
+  auto-update: ->
+    set-timeout (~> auto-update!), 500ms

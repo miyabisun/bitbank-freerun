@@ -3,7 +3,7 @@ require! {
 }
 
 module.exports = class Accounting
-  (@api)->
+  (@api) ->
     @order = null
     @callbacks = new Set!
     @auto-update!
@@ -22,19 +22,18 @@ module.exports = class Accounting
     return yes unless @order
     await @order.cancel!
     await @update!
-  buy: (price, amount)->>
+  buy: (price, amount) ->>
     await @cancel! if @order
     @order = await Order.from \buy, price, amount, @api
-  sell: (price, amount)->>
+  sell: (price, amount) ->>
     await @cancel! if @order
     @order = await Order.from \sell, price, amount, @api
-  mrket-buy: (amount)->>
+  mrket-buy: (amount) ->>
     await @cancel! if @order
     @order = await Order.from \marketBuy, 0, amount, @api
-  mrket-sell: (amount)->>
+  mrket-sell: (amount) ->>
     await @cancel! if @order
     @order = await Order.from \marketSell, 0, amount, @api
   auto-update: ->>
     await @update! if @order
     set-timeout (~> @auto-update!), 500
-

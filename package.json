@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "lsc index.ls",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "find . -name '*.ls' | xargs ls-lint"
   },
   "repository": {
     "type": "git",
@@ -19,10 +19,9 @@
   },
   "homepage": "https://github.com/miyabisun/bitbank-freerun#readme",
   "dependencies": {
-    "coffeescript": "^2.2.3",
-    "lazy.js": "^0.5.1",
     "luxon": "^1.0.0",
     "node-bitbankcc": "^1.0.1",
+    "prelude-ls": "^1.1.2",
     "pubnub": "^4.20.2",
     "ramda": "^0.25.0"
   },
@@ -33,6 +32,9 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
-    "livescript": "^1.5.0"
+    "livescript": "github:gkz/LiveScript",
+    "ls-lint": "github:miyabisun/ls-lint",
+    "optionator": "^0.8.2",
+    "source-map": "^0.7.2"
   }
 }
