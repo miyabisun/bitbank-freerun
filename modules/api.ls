@@ -3,7 +3,7 @@ require! {
   ramda: R
 }
 
-p = <[ticker depth transactions data assets into orders order cancel]>
+p = <[ticker depth transactions data assets info orders order cancel]>
   |> R.map -> require "../functions/#it.ls"
 
 public-methods = (pair, limit) ->
