@@ -1,1 +1,1 @@
---require livescript test/**/*.ls
+--require livescript
