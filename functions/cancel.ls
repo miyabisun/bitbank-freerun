@@ -1,2 +1,2 @@
-main = (api, pair, id) ->>
+module.exports = (api, pair, id) ->>
   await api.cancel-order pair, id
