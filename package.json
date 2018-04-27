@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "lsc index.ls",
-    "test": "find . -name '*.ls' | xargs ls-lint"
+    "lint": "find . -name '*.ls' | xargs ls-lint",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "ramda": "^0.25.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.9.0",
@@ -34,6 +36,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "livescript": "github:gkz/LiveScript",
     "ls-lint": "github:miyabisun/ls-lint",
+    "mocha": "^5.1.1",
     "optionator": "^0.8.2",
     "source-map": "^0.7.2"
   }
