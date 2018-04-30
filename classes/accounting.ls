@@ -3,11 +3,12 @@ require! {
 }
 
 module.exports = class Accounting
-  (@api) ->
+  ({@api}) ->
     @order = null
     @callbacks = new Set!
+    @alive = yes
     @auto-update!
-  @from = -> new Accounting api
+  @from = -> new Accounting it
   has-order:~ -> Boolean @order
   on: -> @callbacks.add it
   off: -> @callbacks.delete it
@@ -36,4 +37,5 @@ module.exports = class Accounting
     @order = await Order.from \marketSell, 0, amount, @api
   auto-update: ->>
     await @update! if @order
-    set-timeout (~> @auto-update!), 500
+    set-timeout (~> @auto-update!), 500 if @alive
+  stop: -> @alive = no
