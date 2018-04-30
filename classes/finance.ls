@@ -17,6 +17,3 @@ module.exports = class Finance
   to-amount:~ -> float @safe.(@to)
   update:~ -> @_update ?= ~> 123
   buy-amount-of: (price) -> float @from-amount / price
-  sell-amount-of: (price) -> @to-amount
-  on: -> @listeners.add it
-  off: -> @listeners.delete it

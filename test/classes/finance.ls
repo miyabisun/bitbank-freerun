@@ -15,37 +15,20 @@ describe file, ->
     specify \safe, ->
       Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
       |> (.safe) >> expect >> (.to.deep.equal btc: 0, jpy: 20_000)
-    specify \from, ->
-      Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
-      |> (.from) >> expect >> (.to.equal \jpy)
-    specify \to, ->
-      Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
-      |> (.to) >> expect >> (.to.equal \btc)
-    specify \from-amount, ->
-      Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
-      |> (.from-amount) >> expect >> (.to.equal 20_000)
-    specify \to-amount, ->
-      Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
-      |> (.to-amount) >> expect >> (.to.equal 0)
-    specify \update, ->
-      finance = Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
-      expect finance.update .to.be.a \function
-      expect finance.update .to.equal finance.update
+    [
+      [\pair, \btc_jpy]
+      [\from, \jpy]
+      [\to, \btc]
+      [\fromAmount, 20_000]
+      [\toAmount, 0]
+    ].for-each ([property, value]) ->
+      specify "#{property} is #{JSON.stringify value}", ->
+        Finance.from pair: \btc_jpy, to: 0, from: 20_000
+        |> (.(property)) >> expect >> (.to.equal value)
+    specify "update is function", ->
+      finance = Finance.from pair: \btc_jpy, to: 0, from: 20_000
+      expect finance.update .to.be.a \function .that.equal finance.update
   describe \methods, ->
-    specify \buy-amount-of, ->
-      Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
+    specify "buy-amount-of 100,000 is 0.2", ->
+      Finance.from pair:\btc_jpy, to: 10, from: 20_000
       |> (.buy-amount-of 100_000) >> expect >> (.to.equal 0.2)
-    specify \sell-amount-of, ->
-      Finance.from {pair: \btc_jpy, to: 10, from: 0}
-      |> (.sell-amount-of 100_000) >> expect >> (.to.equal 10)
-    specify \on, ->
-      fn = -> 123
-      (finance = Finance.from {pair: \btc_jpy, to: 0, from: 20_000})
-        ..on fn
-        ..listeners.size |> expect >> (.to.equal 1)
-    specify \off, ->
-      fn = -> 123
-      (finance = Finance.from {pair: \btc_jpy, to: 0, from: 20_000})
-        ..on fn
-        ..off fn
-        ..listeners.size |> expect >> (.to.equal 0)
