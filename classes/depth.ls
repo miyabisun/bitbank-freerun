@@ -10,6 +10,6 @@ module.exports = class Depth
   @from = -> new Depth it
   on:~ -> @subscriber.on
   off:~ -> @subscriber.off
-  asks: (length = 1) -> @depth.asks |> slice length
-  bids: (length = 1) -> @depth.bids |> slice length
-  of: -> new Value it
+  asks: (length = 1) -> @depth.asks or [] |> slice length
+  bids: (length = 1) -> @depth.bids or [] |> slice length
+  of: -> Value.from it

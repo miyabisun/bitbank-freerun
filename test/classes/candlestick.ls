@@ -17,6 +17,9 @@ describe file, ->
   describe \properties, ->
     (candlestick = Candlestick.from on: (+), off: (+))
       ..datum = candlestick: [], timestamp: 1525104881604
+    <[on off]>.for-each (type) ->
+      specify "#{type} is function", ->
+        expect candlestick.(type) .to.be.a \function
     specify \datetime, ->
       expect candlestick.datetime .to.be.a.instanceof DateTime
       expect candlestick.datetime.value-of! .to.equal 1525104881604
