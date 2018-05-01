@@ -1,0 +1,5 @@
+naming-conventions:
+  value:
+    property: \ignore
+max-line-length:
+  value: 179
