@@ -25,16 +25,16 @@ module.exports = class Accounting
     await @update!
   buy: (price, amount) ->>
     await @cancel! if @order
-    @order = await Order.from \buy, price, amount, @api
+    @order = await Order.buy price, amount, @api
   sell: (price, amount) ->>
     await @cancel! if @order
-    @order = await Order.from \sell, price, amount, @api
+    @order = await Order.sell price, amount, @api
   mrket-buy: (amount) ->>
     await @cancel! if @order
-    @order = await Order.from \marketBuy, 0, amount, @api
+    @order = await Order.market-buy amount, @api
   mrket-sell: (amount) ->>
     await @cancel! if @order
-    @order = await Order.from \marketSell, 0, amount, @api
+    @order = await Order.market-sell amount, @api
   auto-update: ->>
     await @update! if @order
     set-timeout (~> @auto-update!), 500 if @alive

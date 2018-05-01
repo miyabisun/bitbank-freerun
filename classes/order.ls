@@ -24,7 +24,7 @@ module.exports = class Order
   side:~ -> @data.side
   type:~ -> @data.type
   start-amount:~ -> parse-float @data.start_amount
-  remaining-amount:~ -> parse-float @data.remainint_amount
+  remaining-amount:~ -> parse-float @data.remaining_amount
   executed-amount:~ -> parse-float @data.executed_amount
   price:~ -> parse-float @data.price
   average-price:~ -> parse-float @data.average_price
