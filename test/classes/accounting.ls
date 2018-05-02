@@ -1,5 +1,6 @@
 require! {
   chai: {expect}
+  ramda: R
   \../../classes/accounting.ls : Accounting
 }
 
@@ -10,6 +11,7 @@ describe file, ->
       expect Accounting .to.be.a \function
     specify "instance of Accounting", ->
       Accounting.from api: null
+      |> R.tap (.stop!)
       |> expect >> (.to.be.an.instanceof Accounting)
   describe \properties, ->
     (accounting = Accounting.from api: 123)
