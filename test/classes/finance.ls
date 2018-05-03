@@ -11,16 +11,17 @@ describe file, ->
     specify "instance is Finance", ->
       Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
       |> expect >> (.to.be.an.instanceof Finance)
+
   describe \properties, ->
     specify \safe, ->
       Finance.from {pair: \btc_jpy, to: 0, from: 20_000}
       |> (.safe) >> expect >> (.to.deep.equal btc: 0, jpy: 20_000)
     [
-      [\pair, \btc_jpy]
-      [\from, \jpy]
-      [\to, \btc]
-      [\fromAmount, 20_000]
-      [\toAmount, 0]
+      * \pair, \btc_jpy
+      * \from, \jpy
+      * \to, \btc
+      * \fromAmount, 20_000
+      * \toAmount, 0
     ].for-each ([property, value]) ->
       specify "#{property} is #{JSON.stringify value}", ->
         Finance.from pair: \btc_jpy, to: 0, from: 20_000
@@ -28,6 +29,7 @@ describe file, ->
     specify "update is function", ->
       finance = Finance.from pair: \btc_jpy, to: 0, from: 20_000
       expect finance.update .to.be.a \function .that.equal finance.update
+
   describe \methods, ->
     specify "buy-amount-of 100,000 is 0.2", ->
       Finance.from pair:\btc_jpy, to: 10, from: 20_000

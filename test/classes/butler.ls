@@ -12,7 +12,7 @@ describe file, ->
       expect Butler .to.be.a \function
     specify "instance is Butler", ->
       Butler.from depth: on: ->
-      |> R.tap expect >> (.to.be.an.instanceof Butler)
+      |> expect >> (.to.be.an.instanceof Butler)
 
   describe \getters, ->
     specify \order, ->
@@ -49,8 +49,7 @@ describe file, ->
         ..level |> expect |> (.to.equal 0)
     specify \check, ->
       state = triger: null
-      Butler.from depth: on: -> state.triger = it
-        .check!
+      (.check!) <| Butler.from depth: on: -> state.triger = it
       expect state.triger .to.be.a \function
     specify \stop, ->
       state = triger: null

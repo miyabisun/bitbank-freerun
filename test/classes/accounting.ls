@@ -13,13 +13,14 @@ describe file, ->
       Accounting.from api: null
       |> R.tap (.stop!)
       |> expect >> (.to.be.an.instanceof Accounting)
+
   describe \properties, ->
     (accounting = Accounting.from api: 123)
       ..stop!
     [
-      [\api, 123]
-      [\hasOrder, no]
-      [\alive, no]
+      * \api, 123
+      * \hasOrder, no
+      * \alive, no
     ].for-each ([key, val]) ->
       specify "#{key} is #{JSON.stringify val}", ->
         expect accounting.(key) .to.equal val

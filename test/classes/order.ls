@@ -15,6 +15,7 @@ describe file, ->
       do
         await Order.from \buy, 100, 10, buy: ->> {}
       |> expect >> (.to.be.an.instanceof Order)
+
   describe "static methods", ->>
     <[buy sell]>.for-each (type) ->
       specify type, ->>
@@ -25,6 +26,7 @@ describe file, ->
         do
           await Order.("market#{P.capitalize type}") 10, market-buy: (->> {}), market-sell: (->> {})
         |> expect >> (.to.be.an.instanceof Order)
+
   describe \properties, ->
     data =
       order_id: 123
