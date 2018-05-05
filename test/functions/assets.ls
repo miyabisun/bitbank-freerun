@@ -12,19 +12,27 @@ describe file, ->
   describe \type, ->
     specify "is function", ->
       expect main .to.be.a \function
-    specify "return is Promise", ->
-      expect main(api) .to.be.an.instanceof Promise
 
   describe \assets, ->
-    s = result: null
+    s = result: null, promise: null
+    result = -> s.result
+    promise = -> s.promise
     before ->>
-      s.result = await main(api)
-    specify "is array", ->
-      expect s.result.assets .to.be.an \array
-    specify "has object", ->
-      s.result.assets.for-each expect >> (.to.be.a \object)
-    describe "asset list", ->
-      specify "to list", ->
-        asset-list = s.result.assets |> R.group-by (.asset)
-        <[jpy btc xrp mona]>.for-each (R.prop _, asset-list) >> (.0)
-          >> expect >> (.to.be.a \object)
+      s.promise = main api
+      s.result = await s.promise
+
+    specify "is promise", ->
+      expect promise! .to.be.an.instanceof Promise
+    specify "result is object", ->
+      expect result! .to.be.a \object
+    describe "assets property", ->
+      assets = -> result!.assets
+      specify "result is array", ->
+        expect assets! .to.be.an \array
+      specify "has object", ->
+        assets!.for-each expect >> (.to.be.a \object)
+      describe "asset list", ->
+        specify "to list", ->
+          asset-list = assets! |> R.group-by (.asset)
+          <[jpy btc xrp mona]>.for-each (R.prop _, asset-list) >> (.0)
+            >> expect >> (.to.be.a \object)
