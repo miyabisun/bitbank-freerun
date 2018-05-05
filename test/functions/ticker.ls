@@ -12,7 +12,7 @@ describe file, ->
     specify "is function", ->
       expect main .to.be.a \function
 
-  describe \assets, ->
+  describe \ticket, ->
     s = result: null, main: null
     before ->>
       s.main = main api, \xrp_jpy
