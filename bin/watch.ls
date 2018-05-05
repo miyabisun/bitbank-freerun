@@ -1,9 +1,7 @@
 require! {
   fs, path
-  \fs-readdir-recursive : readdir
   child_process: {spawn}
   \prelude-ls : P
-  ramda: R
 }
 output = (command) -> new Promise (resolve) ->
   console.info "> #{command}"
