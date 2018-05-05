@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "lsc index.ls",
-    "lint": "find . -name '*.ls' | xargs ls-lint",
+    "lint": "find . -name '*.ls' | xargs --max-args=10 ls-lint",
     "test": "mocha ./test/**/*.ls",
     "watch": "lsc bin/watch.ls"
   },
