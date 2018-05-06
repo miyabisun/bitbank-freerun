@@ -1,7 +1,8 @@
 require! {
-  \./value.ls : Value
+  \./board-record.ls : Record
+  \prelude-ls : P
 }
-slice = (length, it) --> it or [] |> (.slice 0, length)
+take = (length, it) --> it or [] |> (.slice 0, length)
 
 module.exports = class Depth
   (@subscriber) ->
@@ -10,6 +11,7 @@ module.exports = class Depth
   @from = -> new Depth it
   on:~ -> @subscriber.on
   off:~ -> @subscriber.off
-  asks: (length = 1) -> @depth.asks or [] |> slice length
-  bids: (length = 1) -> @depth.bids or [] |> slice length
-  of: -> Value.from it
+  asks: (length = 1) -> @depth.asks or [] |> take length |> (or []) |> P.map Record.from
+  bids: (length = 1) -> @depth.bids or [] |> take length |> (or []) |> P.map Record.from
+  ask-of: (index = 1) -> @depth.asks or [] |> (.(index - 1) or []) |> Record.from
+  bid-of: (index = 1) -> @depth.bids or [] |> (.(index - 1) or []) |> Record.from
