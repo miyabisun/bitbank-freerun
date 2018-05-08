@@ -20,40 +20,34 @@ describe file, ->
         depth: on: ->
         accounting: order: 123
       Butler.from options .order |> expect |> (.to.equal 123)
-    specify \update, ->
+    specify \depth-tick, ->
       butler = Butler.from depth: on: ->
-      expect butler.update .to.be.a \function
-      expect butler.update .to.equal butler.update
+      expect butler.depth-tick .to.be.a \function
+      expect butler.depth-tick .to.equal butler.depth-tick
 
   describe \methods, ->
     <[buy sell]>.for-each (mode) ->
       specify mode, ->
         (butler = Butler.from depth: on: ->)
-          ..[mode]!
+          ..give-order mode
           ..mode |> expect |> (.to.equal mode)
-          ..level |> expect |> (.to.equal 1)
-        butler
-          ..[mode] 2
-          ..mode |> expect |> (.to.equal mode)
-          ..level |> expect |> (.to.equal 2)
     <[marketBuy marketSell]>.for-each (mode) ->
       specify mode, ->
         (butler = Butler.from depth: on: ->)
-          ..[mode]!
+          ..give-order mode
           ..mode |> expect |> (.to.equal mode)
     specify \cancel, ->
-      (butler = Butler.from depth: on: ->)
-        ..buy!
+      (butler = Butler.from depth: {on: ->}, accounting: {cancel: -> butler.mode = null})
+        ..give-order \buy
         ..cancel!
         ..mode |> expect |> (.to.be.null)
-        ..level |> expect |> (.to.equal 0)
-    specify \check, ->
+    specify \depth-check, ->
       state = triger: null
-      (.check!) <| Butler.from depth: on: -> state.triger = it
+      (.depth-check!) <| Butler.from depth: on: -> state.triger = it
       expect state.triger .to.be.a \function
-    specify \stop, ->
+    specify \depth-stop, ->
       state = triger: null
-      (Butler.from depth: {on: (-> state.triger = it), off: -> state.triger = null})
-        ..check!
-        ..stop!
+      (Butler.from depth: on: (-> state.triger = it), off: (-> state.triger = null))
+        ..depth-check!
+        ..depth-stop!
       expect state.triger .to.be.null
