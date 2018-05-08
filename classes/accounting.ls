@@ -5,6 +5,7 @@ require! {
 module.exports = class Accounting
   ({@api}) ->
     @order = null
+    @mode = null
     @callbacks = new Set!
     @alive = yes
     @auto-update!
@@ -14,28 +15,21 @@ module.exports = class Accounting
   off: -> @callbacks.delete it
   update: ->>
     return yes unless @order
-    try
-      await @order.update!
-      return yes if @order.is-unrminated
-      @callbacks.for-each ~> it @order
-      @order = null
+    try await @order.update!
+    return yes if @order.is-unterminated
+    @callbacks.for-each (<| @order)
+    @order = null
+    @mode = null
   cancel: ->>
     return yes unless @order
     await @order.cancel!
     await @update!
-  buy: (price, amount) ->>
+  give-order: (mode, price, amount) ->>
     await @cancel! if @order
-    @order = await Order.buy price, amount, @api
-  sell: (price, amount) ->>
-    await @cancel! if @order
-    @order = await Order.sell price, amount, @api
-  mrket-buy: (amount) ->>
-    await @cancel! if @order
-    @order = await Order.market-buy amount, @api
-  mrket-sell: (amount) ->>
-    await @cancel! if @order
-    @order = await Order.market-sell amount, @api
+    switch (@mode = mode)
+    | \buy, \marketBuy => @order = await Order.buy price, amount, @api
+    | \sell, \marketSell => @order = await Order.sell price, amount, @api
   auto-update: ->>
-    await @update! if @order
+    try await @update! if @order
     set-timeout (~> @auto-update!), 500 if @alive
   stop: -> @alive = no
