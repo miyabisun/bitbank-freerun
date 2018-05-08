@@ -11,7 +11,7 @@ module.exports = class Depth
   @from = -> new Depth it
   on:~ -> @subscriber.on
   off:~ -> @subscriber.off
-  asks: (length = 1) -> @depth.asks or [] |> take length |> (or []) |> P.map Record.from
-  bids: (length = 1) -> @depth.bids or [] |> take length |> (or []) |> P.map Record.from
+  asks: (length = 100) -> @depth.asks or [] |> take length |> (or []) |> P.map Record.from
+  bids: (length = 100) -> @depth.bids or [] |> take length |> (or []) |> P.map Record.from
   ask-of: (index = 1) -> @depth.asks or [] |> (.(index - 1) or []) |> Record.from
   bid-of: (index = 1) -> @depth.bids or [] |> (.(index - 1) or []) |> Record.from
