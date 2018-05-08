@@ -22,10 +22,6 @@ describe file, ->
         do
           await Order.(type) 100, 10, buy: (->> {}), sell: (->> {})
         |> expect >> (.to.be.an.instanceof Order)
-      specify "market#{P.capitalize type}", ->>
-        do
-          await Order.("market#{P.capitalize type}") 10, market-buy: (->> {}), market-sell: (->> {})
-        |> expect >> (.to.be.an.instanceof Order)
 
   describe \properties, ->
     data =

@@ -13,10 +13,6 @@ module.exports = class Order
     Order.from \buy, price, amount, api
   @sell = (price, amount, api) ->>
     Order.from \sell, price, amount, api
-  @market-buy = (amount, api) ->>
-    Order.from \marketBuy, 0, amount, api
-  @market-sell = (amount, api) ->>
-    Order.from \marketSell, 0, amount, api
 
   # getters
   data:~ -> @entity.data or {}
@@ -31,7 +27,8 @@ module.exports = class Order
   orderd-at:~ -> DateTime.from-millis @data.ordered_at
   status:~ -> @data.status
   is-terminated:~ -> not @is-unterminated
-  is-unterminated:~ -> <[UNFILLED PARTIALLY_FILLED]>.includes @data.status
+  is-unterminated:~ -> @status in <[UNFILLED PARTIALLY_FILLED]>
+  is-canceled:~ -> @status in <[CANCELED_UNFILLED CANCELED_PARTIALLY_FILLED]>
 
   # A vs B
   sign-a:~ -> if @side is \buy then 1 else -1
