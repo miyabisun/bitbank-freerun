@@ -20,8 +20,8 @@ describe file, ->
       * \pair, \btc_jpy
       * \from, \jpy
       * \to, \btc
-      * \fromAmount, 20_000
-      * \toAmount, 0
+      * \money, 20_000
+      * \amount, 0
     ].for-each ([property, value]) ->
       specify "#{property} is #{JSON.stringify value}", ->
         Finance.from pair: \btc_jpy, to: 0, from: 20_000
