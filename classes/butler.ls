@@ -26,16 +26,21 @@ module.exports = class Butler
 
   # methods
   give-order: (@mode) ->
-  order: (mode) ->> @accounting.give-order @mode, @price, @amount
+  do-order: ->> @accounting.give-order @mode, @price, @amount
   cancel: ->>
     try await @accounting.cancel!
     @mode = null
-  depth-tick:~ -> @_depth-tick ?= (msg) ~>
-    switch @mode
-    | \buy =>
-    | \sell =>
-    | \marketBuy =>
-    | \marketSell =>
+  depth-tick:~ -> @_depth-tick ?= (msg) ~>>
+    return unless @mode
+    return if @accounting.is-proceeding
+    switch
+    | not @order => @do-order!
+    | @mode isnt @accounting.mode =>
+      await @cancel!
+      @do-order!
+    | @mode in <[buy sell]> and @price isnt @order.price =>
+      await @cancel!
+      @do-order!
   depth-check: -> @depth.on @depth-tick
   depth-stop: -> @depth.off @depth-tick
   order-tick:~ -> @_order-tick ?= (order) ~>
