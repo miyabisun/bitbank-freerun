@@ -20,6 +20,13 @@ describe file, ->
         depth: on: ->
         accounting: order: 123
       Butler.from options .order |> expect |> (.to.equal 123)
+    describe \price, ->
+      options =
+        depth: on: (->), bid-of: -> price: 123
+        accounting: order: 123
+      Butler.from options
+        ..give-order \buy
+        ..price |> expect |> (.to.be.a \number)
     specify \depth-tick, ->
       butler = Butler.from depth: on: ->
       expect butler.depth-tick .to.be.a \function
@@ -36,11 +43,11 @@ describe file, ->
         (butler = Butler.from depth: on: ->)
           ..give-order mode
           ..mode |> expect |> (.to.equal mode)
-    specify \cancel, ->
-      (butler = Butler.from depth: {on: ->}, accounting: {cancel: -> butler.mode = null})
-        ..give-order \buy
-        ..cancel!
-        ..mode |> expect |> (.to.be.null)
+    specify \cancel, ->>
+      butler = Butler.from depth: {on: ->}, accounting: {cancel: ->> butler.mode = null}
+      butler.give-order \buy
+      await butler.cancel!
+      butler.mode |> expect |> (.to.be.null)
     specify \depth-check, ->
       state = triger: null
       (.depth-check!) <| Butler.from depth: on: -> state.triger = it

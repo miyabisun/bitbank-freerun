@@ -10,6 +10,12 @@ module.exports = class Butler
 
   # getters
   order:~ -> @accounting.order
+  price:~ ->
+    switch @mode
+    | \buy => @depth.bid-of 1 .price
+    | \sell => @depth.ask-of 1 .price
+    | \marketBuy => 0
+    | \marketSell => 0
 
   # methods
   give-order: (@mode) ->
@@ -23,7 +29,9 @@ module.exports = class Butler
   sell: -> @accounting.give-order \sell, price, amount
   market-buy: -> @accounting.give-order \marketBuy, price, amount
   market-sell: -> @accounting.give-order \marketSell, price, amount
-  cancel: -> @accounting.cancel!
+  cancel: ->>
+    try await @accounting.cancel!
+    @mode = null
   depth-tick:~ -> @_depth-tick ?= (msg) ~>
     switch @mode
     | \buy =>
@@ -35,8 +43,7 @@ module.exports = class Butler
   order-tick:~ -> @_order-tick ?= (order) ~>
     return if order.is-unterminated
     return if order.is-canceled
-    switch order.side
-    | \buy => @mode in <[buy marketBuy]>
-    | \sell => @mode in <[sell marketSell]>
+    @mode = null if order.side is \buy and @mode in <[buy marketBuy]>
+    @mode = null if order.side is \sell and @mode in <[sell marketSell]>
   order-check: -> @accounting.on @order-tick
   order-stop: -> @accounting.off @order-tick
