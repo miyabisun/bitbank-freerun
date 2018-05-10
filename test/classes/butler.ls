@@ -20,29 +20,38 @@ describe file, ->
         depth: on: ->
         accounting: order: 123
       Butler.from options .order |> expect |> (.to.equal 123)
-    describe \price, ->
+    specify \price, ->
       options =
-        depth: on: (->), bid-of: -> price: 123
+        depth: on: (->), bid-of: (-> price: 123)
         accounting: order: 123
       Butler.from options
         ..give-order \buy
         ..price |> expect |> (.to.be.a \number)
+    specify \amount, ->
+      options =
+        depth: on: (->), bid-of: (-> price: 123)
+        finance: from-amount: 123
+        accounting: order: 123
+      Butler.from options
+        ..give-order \buy
+        ..amount |> expect |> (.to.be.a \number)
     specify \depth-tick, ->
       butler = Butler.from depth: on: ->
       expect butler.depth-tick .to.be.a \function
       expect butler.depth-tick .to.equal butler.depth-tick
 
   describe \methods, ->
-    <[buy sell]>.for-each (mode) ->
-      specify mode, ->
-        (butler = Butler.from depth: on: ->)
-          ..give-order mode
-          ..mode |> expect |> (.to.equal mode)
-    <[marketBuy marketSell]>.for-each (mode) ->
-      specify mode, ->
-        (butler = Butler.from depth: on: ->)
-          ..give-order mode
-          ..mode |> expect |> (.to.equal mode)
+    describe \give-order, ->
+      <[buy sell]>.for-each (mode) ->
+        specify mode, ->
+          (butler = Butler.from depth: on: ->)
+            ..give-order mode
+            ..mode |> expect |> (.to.equal mode)
+      <[marketBuy marketSell]>.for-each (mode) ->
+        specify mode, ->
+          (butler = Butler.from depth: on: ->)
+            ..give-order mode
+            ..mode |> expect |> (.to.equal mode)
     specify \cancel, ->>
       butler = Butler.from depth: {on: ->}, accounting: {cancel: ->> butler.mode = null}
       butler.give-order \buy

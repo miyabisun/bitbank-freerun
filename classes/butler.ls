@@ -14,21 +14,19 @@ module.exports = class Butler
     switch @mode
     | \buy => @depth.bid-of 1 .price
     | \sell => @depth.ask-of 1 .price
-    | \marketBuy => 0
-    | \marketSell => 0
+    # TODO: marketBuy, marketSellはちゃんとしたロジックを検討する
+    | \marketBuy => @depth.ask-of 5 .price
+    | \marketSell => @depth.bid-of 5 .price
+  amount:~ ->
+    switch @mode
+    | \buy => @finance.money / @price
+    | \sell => @finance.amount
+    | \marketBuy => @finance.mony / @price
+    | \marketSell => @finance.amount
 
   # methods
   give-order: (@mode) ->
-  order: ->>
-    switch @mode
-    | \buy =>
-    | \sell =>
-    | \marketBuy =>
-    | \marketSell =>
-  buy: -> @accounting.give-order \buy, price, amount
-  sell: -> @accounting.give-order \sell, price, amount
-  market-buy: -> @accounting.give-order \marketBuy, price, amount
-  market-sell: -> @accounting.give-order \marketSell, price, amount
+  order: (mode) ->> @accounting.give-order @mode, @price, @amount
   cancel: ->>
     try await @accounting.cancel!
     @mode = null
@@ -43,7 +41,6 @@ module.exports = class Butler
   order-tick:~ -> @_order-tick ?= (order) ~>
     return if order.is-unterminated
     return if order.is-canceled
-    @mode = null if order.side is \buy and @mode in <[buy marketBuy]>
-    @mode = null if order.side is \sell and @mode in <[sell marketSell]>
+    @mode = null if @accounting.mode is @mode
   order-check: -> @accounting.on @order-tick
   order-stop: -> @accounting.off @order-tick
