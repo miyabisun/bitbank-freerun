@@ -6,6 +6,7 @@ module.exports = class Accounting
   ({@api}) ->
     @order = null
     @mode = null
+    @is-proceeding = no
     @callbacks = new Set!
     @alive = yes
     @auto-update!
@@ -25,10 +26,13 @@ module.exports = class Accounting
     await @order.cancel!
     await @update!
   give-order: (mode, price, amount) ->>
+    @is-proceeding = yes
     await @cancel! if @order
-    switch (@mode = mode)
-    | \buy, \marketBuy => @order = await Order.buy price, amount, @api
-    | \sell, \marketSell => @order = await Order.sell price, amount, @api
+    try
+      switch (@mode = mode)
+      | \buy, \marketBuy => @order = await Order.buy price, amount, @api
+      | \sell, \marketSell => @order = await Order.sell price, amount, @api
+    @is-proceeding = no
   auto-update: ->>
     try await @update! if @order
     set-timeout (~> @auto-update!), 500 if @alive
