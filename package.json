@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "lsc index.ls",
+    "start": "lsc --map none bin/start.ls",
     "lint": "find . -name '*.ls' | xargs --max-args=10 ls-lint",
     "test": "mocha ./test/**/*.ls",
     "watch": "lsc bin/watch.ls"
@@ -24,7 +24,7 @@
     "luxon": "^1.2.0",
     "node-bitbankcc": "^1.0.1",
     "prelude-ls": "^1.1.2",
-    "pubnub": "^4.20.2",
+    "pubnub": "^4.20.3",
     "ramda": "^0.25.0"
   },
   "devDependencies": {
