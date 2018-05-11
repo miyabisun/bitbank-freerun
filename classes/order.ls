@@ -5,9 +5,7 @@ require! {
 module.exports = class Order
   (@api, @entity) ->
   @from = (type, price, amount, api) ->>
-    entity = if type is /^market/
-      then api.(type) amount
-      else api.(type) price, amount
+    entity = api.(type) price, amount
     new Order api, await entity
   @buy = (price, amount, api) ->>
     Order.from \buy, price, amount, api
@@ -15,8 +13,9 @@ module.exports = class Order
     Order.from \sell, price, amount, api
 
   # getters
-  data:~ -> @entity.data or {}
+  data:~ -> @entity or {}
   id:~ -> @data.order_id
+  pair:~ -> @data.pair
   side:~ -> @data.side
   type:~ -> @data.type
   start-amount:~ -> parse-float @data.start_amount
@@ -46,6 +45,7 @@ module.exports = class Order
     return @ if @is-terminated
     try
       @entity = await @api.info @id
-    catch
-      @update!
+    catch err
+      console.error err
+      await @update!
     return @

@@ -4,7 +4,8 @@ require! {
 }
 
 p = <[ticker depth transactions data assets info orders order cancel]>
-  |> R.map -> require "../functions/#it.ls"
+  |> R.map -> [it, require "../functions/#it.ls"]
+  |> R.from-pairs
 
 public-methods = (pair, limit) ->
   api = bitbank.public-api!
@@ -18,17 +19,17 @@ public-methods = (pair, limit) ->
 private-methods = (pair, key, secret, limit) ->
   api = bitbank.private-api key, secret
   assets = -> p.assets api, limit .then (.assets)
-  order = (price, amount, side, type) ->
-    p.order api, pair, price, amount, side, type, limit
+  order = ({price, amount, side, type}) ->
+    p.order api, pair, {price, amount, side, type}
   return {
     assets
-    into: (id) -> p.into api, pair, id, limit
+    info: (id) -> p.info api, pair, id
     orders: -> p.orders api, pair, count: 100, limit
     order
-    buy: (price, amount) -> order price, amount, \buy, \limit
-    sell: (price, amount) -> order price, amount, \sell, \limit
-    market-buy: (amount) -> order 0, amount, \buy, \market
-    market-sell: (amount) -> order 0, amount, \sell, \market
+    buy: (price, amount) -> order {price, amount, side: \buy, type: \limit}
+    sell: (price, amount) -> order {price, amount, side: \sell, type: \limit}
+    market-buy: (amount) -> order {0, amount, side: \buy, type: \market}
+    market-sell: (amount) -> order {0, amount, side: \sell, type: \market}
     cancel: (id) -> p.cancel api, pair, id, limit
   }
 
