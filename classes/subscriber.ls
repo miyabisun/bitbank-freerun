@@ -12,9 +12,9 @@ module.exports = class Subscriber
     (@pubnub = new PubNub {subscribe-key})
       ..subscribe channels: [channel]
       ..addListener do
-        status: (val) -> @events.status.for-each -> it val
-        message: (val) -> @events.message.for-each -> it val.message.data
-        presence: (val) -> @events.presence.for-each -> it val
+        status: (val) ~> @events.status.for-each -> it val
+        message: (val) ~> @events.message.for-each -> it val.message.data
+        presence: (val) ~> @events.presence.for-each -> it val
   @from = (channel, subscribe-key) -> new Subscriber channel, subscribe-key
-  on: (type, fn) -> @events.(type)?.add fn
-  off: (type, fn) -> @events.(type)?.delete fn
+  on: (type, fn) -> @events.(type).add fn
+  off: (type, fn) -> @events.(type).delete fn
