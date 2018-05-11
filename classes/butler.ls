@@ -6,6 +6,7 @@ module.exports = class Butler
   ({@depth, @finance, @accounting}) ->
     @mode = null
     @depth-check!
+    @order-check!
   @from = -> new Butler it
 
   # getters
@@ -26,26 +27,33 @@ module.exports = class Butler
 
   # methods
   give-order: (@mode) ->
-  do-order: ->> @accounting.give-order @mode, @price, @amount
+  do-order: ->>
+    @accounting~give-order @mode, @price, @amount
   cancel: ->>
     try await @accounting.cancel!
     @mode = null
   depth-tick:~ -> @_depth-tick ?= (msg) ~>>
     return unless @mode
     return if @accounting.is-proceeding
+    return if @amount < 0.01
+    console.log \butler:, \depth-tick, @mode
     switch
-    | not @order => @do-order!
+    | not @order =>
+      console.log \butler:, @mode, \!
+      @do-order!
     | @mode isnt @accounting.mode =>
-      await @cancel!
+      try await @accounting.cancel!
+      console.log \butler:, @mode, \!
       @do-order!
     | @mode in <[buy sell]> and @price isnt @order.price =>
-      await @cancel!
+      try await @accounting.cancel!
+      console.log \butler:, @mode, \!
       @do-order!
-  depth-check: -> @depth.on @depth-tick
-  depth-stop: -> @depth.off @depth-tick
+  depth-check: -> @depth~on \message, @depth-tick
+  depth-stop: -> @depth~off \message, @depth-tick
   order-tick:~ -> @_order-tick ?= (order) ~>
     return if order.is-unterminated
     return if order.is-canceled
     @mode = null if @accounting.mode is @mode
-  order-check: -> @accounting.on @order-tick
-  order-stop: -> @accounting.off @order-tick
+  order-check: -> @accounting~on @order-tick
+  order-stop: -> @accounting~off @order-tick
